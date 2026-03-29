@@ -71,6 +71,7 @@ Renombrar los siguientes archivos:
 
 ```bash
 ./backend/node_modules/whatsapp-web.js/.env.example
+/backend/src/utils/index/ingest/.env.example
 ./backend/.env.example
 ./databases/historial/.env.example
 ./frontend/client/.env.example
