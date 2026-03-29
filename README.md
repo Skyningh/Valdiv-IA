@@ -49,13 +49,8 @@ git clone https://github.com/Valdiv-IA-UACH/Valdiv-IA
 cd Valdiv-IA
 ```
 ## 5. Levantamiento del stack principal
-Antes de levantar cualquier contenedor, **es obligatorio configurar los archivos de entorno**.  
-Todos los archivos `.env.example` deben ser **renombrados a `.env`** y sus variables ajustadas según el entorno local.
 
-> ⚠️ **Crítico:** Es indispensable definir una clave válida de OpenAI en la variable `OPENAI_API_KEY`.  
-> Sin esta variable, los servicios de embeddings, RAG e ingestión **no funcionarán**.
-
-### 5.0 Instalación de dependencias
+### 5.1 Instalación de dependencias
 
 Dirigirse al directorio `backend` y ejecutar el siguiente comando:
 
@@ -63,7 +58,14 @@ Dirigirse al directorio `backend` y ejecutar el siguiente comando:
 npm install
 ```
 
-### 5.1 Archivos a configurar
+### 5.2 Archivos a configurar
+
+Antes de levantar cualquier contenedor, **es obligatorio configurar los archivos de entorno**.  
+Todos los archivos `.env.example` deben ser **renombrados a `.env`** y sus variables ajustadas según el entorno local.
+
+> ⚠️ **Crítico:** Es indispensable definir una clave válida de OpenAI en la variable `OPENAI_API_KEY`.  
+> Sin esta variable, los servicios de embeddings, RAG e ingestión **no funcionarán**.
+
 
 Renombrar los siguientes archivos:
 
@@ -84,7 +86,7 @@ Ejemplo general:
 mv .env.example .env
 ```
 
-Puedes usar el siguiente comando:
+Puedes usar el siguiente comando desde la raíz del proyecto:
 ```bash
 for f in \
   ./backend/node_modules/whatsapp-web.js/.env.example \
@@ -104,7 +106,7 @@ En particular, verificar que exista en la ruta   y esté definida la variable:
 
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-### 5.2 Build y ejecución inicial
+### 5.3 Build y ejecución inicial
 Desde la raiz del proyecto, ejecutar:
 
 ```bash
@@ -118,7 +120,7 @@ Este comando:
 - Crea volúmenes persistentes
 - Levanta todos los servicios core
 
-### 5.3 Verificación de contenedores
+### 5.4 Verificación de contenedores
 ```bash
 docker ps
 ```
