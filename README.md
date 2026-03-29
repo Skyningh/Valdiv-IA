@@ -55,7 +55,15 @@ Todos los archivos `.env.example` deben ser **renombrados a `.env`** y sus varia
 > ⚠️ **Crítico:** Es indispensable definir una clave válida de OpenAI en la variable `OPENAI_API_KEY`.  
 > Sin esta variable, los servicios de embeddings, RAG e ingestión **no funcionarán**.
 
-### 5.0 Archivos a configurar
+### 5.0 Instalación de dependencias
+
+Dirigirse al directorio `backend` y ejecutar el siguiente comando:
+
+```bash
+npm install
+```
+
+### 5.1 Archivos a configurar
 
 Renombrar los siguientes archivos:
 
@@ -76,11 +84,28 @@ Ejemplo general:
 mv .env.example .env
 ```
 
-En particular, verificar que exista y esté definida la variable:
+Puedes usar el siguiente comando:
+```bash
+for f in \
+  ./backend/node_modules/whatsapp-web.js/.env.example \
+  ./backend/.env.example \
+  ./databases/historial/.env.example \
+  ./frontend/client/.env.example \
+  ./whatsapp/.env.example \
+  ./crud-detector/.env.example \
+  ./ingest/.env.example \
+  ./.env.example
+do
+  mv "$f" "${f%.example}"
+done
+```
+
+En particular, verificar que exista en la ruta   y esté definida la variable:
 
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-### 5.1 Build y ejecución inicial
+### 5.2 Build y ejecución inicial
+Desde la raiz del proyecto, ejecutar:
 
 ```bash
 docker compose up -d --build
@@ -93,7 +118,7 @@ Este comando:
 - Crea volúmenes persistentes
 - Levanta todos los servicios core
 
-### 5.2 Verificación de contenedores
+### 5.3 Verificación de contenedores
 ```bash
 docker ps
 ```
