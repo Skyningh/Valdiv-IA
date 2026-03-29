@@ -187,6 +187,7 @@ services:
     networks:
       - red_taller_software
     restart: always
+    profiles: ["manual"]
     labels:
       - "org.uach.group=${GROUP}"
       - "org.uach.project=${PROJECT}"
@@ -210,6 +211,7 @@ services:
       - "org.uach.project=${PROJECT}"
       - "org.uach.service=crud-detector-api"
       - "logging=promtail"
+    profiles: ["manual"]
 
   ingest_user:
     build:
