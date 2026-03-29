@@ -90,6 +90,7 @@ Puedes usar el siguiente comando desde la raíz del proyecto:
 ```bash
 for f in \
   ./backend/node_modules/whatsapp-web.js/.env.example \
+  ./backend/src/utils/index/ingest/.env.example \
   ./backend/.env.example \
   ./databases/historial/.env.example \
   ./frontend/client/.env.example \
@@ -107,7 +108,15 @@ En particular, verificar que exista en la ruta   y esté definida la variable:
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ### 5.3 Build y ejecución inicial
-Desde la raiz del proyecto, ejecutar:
+
+Comenzar creando la red de Docker necesaria para el proyecto. Desde la raíz del proyecto, ejecutar el siguiente comando:
+
+```bash
+docker network create red_taller_software
+```
+
+
+Una vez creada la red, proceder a construir y levantar los contenedores del proyecto ejecutando desde la raíz del proyecto:
 
 ```bash
 docker compose up -d --build
