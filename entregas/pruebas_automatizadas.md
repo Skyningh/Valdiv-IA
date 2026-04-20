@@ -3,7 +3,9 @@
 
 
 **Caso de Prueba 1: Enviar mensaje**
+
 **Referencia:** https://youtu.be/vC4t4p3sAKg
+
 **ID**: CP-01
 
 **Descripción:** Verificar que el usuario puede escribir y enviar un mensaje, y que este se visualiza correctamente en la interfaz del chat.
@@ -29,7 +31,9 @@
 **Estado**: Pass
 
 **Caso de Prueba 2: Recuperar última sesión de chat**
+
 **Referencia:** https://youtu.be/Zrag0ITGblE
+
 **ID**: CP-02
 
 **Descripción:** Verificar que al volver al chatbot, el sistema carga y muestra correctamente la última sesión de conversación del usuario.
