@@ -12,60 +12,135 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  services:
 
-      # -------------------
-      # Backend
-      # -------------------
-      - name: Set up Node.js for backend
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
+    postgres:
+      image: postgres:16-alpine
 
-      - name: Install backend dependencies
-        working-directory: ./backend
-        run: npm ci
+      env:
+        POSTGRES_DB: test_db
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
 
-      - name: Run backend tests
-        working-directory: ./backend
-        run: npm test || echo "No tests defined"
+      ports:
+        - 5432:5432
 
-      - name: Build backend Docker image
-        run: docker build -t valdiv-ia-backend ./backend
+      options: >-
+        --health-cmd="pg_isready -U postgres -d test_db"
+        --health-interval=10s
+        --health-timeout=5s
+        --health-retries=5
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    mongodb:
+      image: mongo:7
 
-      - name: Tag and push backend image
-        run: |
-          docker tag valdiv-ia-backend ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-backend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-backend:latest
+      ports:
+        - 27017:27017
 
-      # -------------------
-      # Frontend
-      # -------------------
-      - name: Set up Node.js for frontend
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
+      options: >-
+        --health-cmd="mongosh --eval 'db.runCommand({ ping: 1 })'"
+        --health-interval=10s
+        --health-timeout=5s
+        --health-retries=5
 
-      - name: Install frontend dependencies
-        working-directory: ./frontend/client
-        run: npm ci
+    redis:
+      image: redis:7-alpine
 
-      - name: Build frontend production
-        working-directory: ./frontend/client
-        run: npm run build
+      ports:
+        - 6379:6379
 
-      - name: Build frontend Docker image
-        run: docker build -t valdiv-ia-frontend ./frontend/client
+      options: >-
+        --health-cmd="redis-cli ping"
+        --health-interval=10s
+        --health-timeout=5s
+        --health-retries=5
 
-      - name: Tag and push frontend image
-        run: |
-          docker tag valdiv-ia-frontend ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-frontend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-frontend:latest
+  env:
+
+    # PostgreSQL
+    DB_HOST: localhost
+    DB_PORT: 5432
+    POSTGRES_DB: test_db
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+
+    # MongoDB
+    MONGO_URI: mongodb://localhost:27017/test_db
+
+    # Redis
+    REDIS_HOST: localhost
+    REDIS_PORT: 6379
+
+
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # -------------------
+    # Backend
+    # -------------------
+    - name: Set up Node.js for backend
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install backend dependencies
+      working-directory: ./backend
+      run: npm ci
+
+    - name: Run backend tests
+      working-directory: ./backend
+      run: npm test || echo "No tests defined"
+
+    - name: Build backend Docker image
+      run: docker build -t valdiv-ia-backend ./backend
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    - name: Tag and push backend image
+      run: |
+        docker tag valdiv-ia-backend ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-backend:latest
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-backend:latest
+
+    # -------------------
+    # Frontend
+    # -------------------
+    - name: Set up Node.js for frontend
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+
+    - name: Install frontend dependencies
+      working-directory: ./frontend/client
+      run: npm ci
+
+    - name: Build frontend production
+      working-directory: ./frontend/client
+      run: npm run build
+
+    - name: Build frontend Docker image
+      run: docker build -t valdiv-ia-frontend ./frontend/client
+
+    - name: Tag and push frontend image
+      run: |
+        docker tag valdiv-ia-frontend ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-frontend:latest
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/valdiv-ia-frontend:latest
+
+
+    # ==========================
+    # Tests
+    # ==========================
+
+    - name: Test 1
+      working-directory: test
+      run: |
+        node recover-last-session.js
+
+    - name: Test 2
+      working-directory: test
+      run: |
+        node send-message.js
